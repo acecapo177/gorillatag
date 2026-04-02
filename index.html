@@ -71,17 +71,7 @@
       font-weight: bold;
     }
 
-    .error-text {
-      color: #e74c3c !important;
-    }
 
-    .price-change-positive {
-      color: #2ecc71 !important;
-    }
-
-    .price-change-negative {
-      color: #e74c3c !important;
-    }
   </style>
 </head>
 <body>
@@ -100,60 +90,14 @@
   </div>
 
   <script>
-    function formatCurrency(value) {
-      if (value == null) return "N/A";
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: value < 1 ? 6 : 2,
-        maximumFractionDigits: value < 1 ? 6 : 2,
-      }).format(value);
-    }
-
-    async function fetchTokenData() {
-      try {
-        const res = await fetch("/api/token-price");
-        if (!res.ok) throw new Error("API error");
-        const data = await res.json();
-
-        const priceEl = document.getElementById("price");
-        const marketCapEl = document.getElementById("market-cap");
-
-        if (data.error) {
-          priceEl.textContent = "Unavailable";
-          priceEl.classList.add("error-text");
-          marketCapEl.textContent = "Unavailable";
-          marketCapEl.classList.add("error-text");
-          return;
-        }
-
-        if (data.price != null) {
-          let priceText = formatCurrency(data.price);
-          if (data.priceChange24h != null) {
-            const sign = data.priceChange24h >= 0 ? "+" : "";
-            priceText += ` (${sign}${data.priceChange24h.toFixed(2)}%)`;
-            priceEl.className = data.priceChange24h >= 0
-              ? "price-change-positive"
-              : "price-change-negative";
-          }
-          priceEl.textContent = priceText;
-        } else {
-          priceEl.textContent = "N/A";
-        }
-
-        marketCapEl.textContent = data.marketCap != null
-          ? formatCurrency(data.marketCap)
-          : "N/A";
-      } catch (err) {
-        document.getElementById("price").textContent = "Unavailable";
-        document.getElementById("price").classList.add("error-text");
-        document.getElementById("market-cap").textContent = "Unavailable";
-        document.getElementById("market-cap").classList.add("error-text");
-      }
-    }
-
-    fetchTokenData();
-    setInterval(fetchTokenData, 60000);
+    document.addEventListener('DOMContentLoaded', function () {
+      // Simulate fetching data for Token Tracker
+      setTimeout(function () {
+        // Example static data, you can replace with real API calls later
+        document.getElementById('price').innerText = '$0.01';
+        document.getElementById('market-cap').innerText = '$1,000,000';
+      }, 1000);
+    });
   </script>
 </body>
 </html>
