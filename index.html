@@ -71,6 +71,43 @@
       font-weight: bold;
     }
 
+    /* Airdrop Section */
+    .section form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .section form input[type="text"],
+    .section form input[type="email"] {
+      padding: 0.75rem 1rem;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    .section form input::placeholder {
+      color: #6a6a8a;
+    }
+
+    .cta-btn {
+      padding: 0.75rem 1.5rem;
+      background-color: #4ecca3;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .cta-btn:hover {
+      background-color: #3dbb91;
+    }
 
   </style>
 </head>
@@ -86,6 +123,21 @@
         <p><strong>Market Cap:</strong> <span id="market-cap">Loading...</span></p>
         <p><strong>Total Supply:</strong> <span id="total-supply">100,000,000</span></p>
       </div>
+    </section>
+
+    <!-- Airdrop Participation Section -->
+    <section id="airdrop" class="section">
+      <h2>Participate in the Airdrop</h2>
+      <p>Get your share of the Gorilla Tag token! Sign up now to receive free tokens.</p>
+      <form name="airdrop" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <p style="display:none">
+          <label>Don't fill this: <input name="bot-field" /></label>
+        </p>
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="text" name="wallet" placeholder="Your Solana Wallet Address" required>
+        <button type="submit" class="cta-btn">Join the Airdrop</button>
+      </form>
     </section>
   </div>
 
