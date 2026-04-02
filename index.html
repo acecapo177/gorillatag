@@ -24,6 +24,8 @@
     .container {
       text-align: center;
       padding: 2rem;
+      max-width: 600px;
+      width: 100%;
     }
 
     h1 {
@@ -36,12 +38,127 @@
       font-size: 1.25rem;
       color: #a0a0b0;
     }
+
+    .section {
+      margin-top: 2.5rem;
+      background: #16213e;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .section h2 {
+      font-size: 1.5rem;
+      color: #4ecca3;
+      margin-bottom: 1.25rem;
+    }
+
+    .tracker-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tracker-stats p {
+      font-size: 1.1rem;
+      color: #c0c0d0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tracker-stats strong {
+      color: #e0e0e0;
+    }
+
+    .tracker-stats span {
+      font-family: 'Courier New', monospace;
+      color: #4ecca3;
+    }
+
+    .error-text {
+      color: #e74c3c !important;
+    }
+
+    .price-change-positive {
+      color: #2ecc71 !important;
+    }
+
+    .price-change-negative {
+      color: #e74c3c !important;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Gorilla Tag</h1>
     <p>Welcome to Gorilla Tag</p>
+
+    <section id="tracker" class="section">
+      <h2>Gorilla Tag Token Tracker</h2>
+      <div class="tracker-stats">
+        <p><strong>Current Price:</strong> <span id="price">Loading...</span></p>
+        <p><strong>Market Cap:</strong> <span id="market-cap">Loading...</span></p>
+        <p><strong>Total Supply:</strong> <span id="total-supply">100,000,000</span></p>
+      </div>
+    </section>
   </div>
+
+  <script>
+    function formatCurrency(value) {
+      if (value == null) return "N/A";
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: value < 1 ? 6 : 2,
+        maximumFractionDigits: value < 1 ? 6 : 2,
+      }).format(value);
+    }
+
+    async function fetchTokenData() {
+      try {
+        const res = await fetch("/api/token-price");
+        if (!res.ok) throw new Error("API error");
+        const data = await res.json();
+
+        const priceEl = document.getElementById("price");
+        const marketCapEl = document.getElementById("market-cap");
+
+        if (data.error) {
+          priceEl.textContent = "Unavailable";
+          priceEl.classList.add("error-text");
+          marketCapEl.textContent = "Unavailable";
+          marketCapEl.classList.add("error-text");
+          return;
+        }
+
+        if (data.price != null) {
+          let priceText = formatCurrency(data.price);
+          if (data.priceChange24h != null) {
+            const sign = data.priceChange24h >= 0 ? "+" : "";
+            priceText += ` (${sign}${data.priceChange24h.toFixed(2)}%)`;
+            priceEl.className = data.priceChange24h >= 0
+              ? "price-change-positive"
+              : "price-change-negative";
+          }
+          priceEl.textContent = priceText;
+        } else {
+          priceEl.textContent = "N/A";
+        }
+
+        marketCapEl.textContent = data.marketCap != null
+          ? formatCurrency(data.marketCap)
+          : "N/A";
+      } catch (err) {
+        document.getElementById("price").textContent = "Unavailable";
+        document.getElementById("price").classList.add("error-text");
+        document.getElementById("market-cap").textContent = "Unavailable";
+        document.getElementById("market-cap").classList.add("error-text");
+      }
+    }
+
+    fetchTokenData();
+    setInterval(fetchTokenData, 60000);
+  </script>
 </body>
 </html>
